@@ -38,6 +38,7 @@
     --spacing-30: 120px;
 
     --font-sans: sans-regular;
+    --font-sans-regular: sans-regular;
     --font-sans-light: sans-light;
     --font-sans-medium: sans-medium;
     --font-sans-semibold: sans-semibold;
@@ -216,6 +217,98 @@
 
     .sub-cancel-disabled {
         @apply bg-primary/35;
+    }
+
+    .auth-flow-content {
+        @apply mx-auto w-full max-w-md gap-3;
+    }
+
+    .auth-flow-brand-row {
+        @apply flex-row items-center gap-3;
+    }
+
+    .auth-flow-brand-mark {
+        @apply size-12 items-center justify-center rounded-2xl bg-primary;
+    }
+
+    .auth-flow-brand-symbol {
+        @apply font-sans-bold text-xl text-accent;
+    }
+
+    .auth-flow-brand-label {
+        @apply text-xs font-sans-bold tracking-widest text-primary;
+    }
+
+    .auth-flow-heading-group {
+        @apply gap-1;
+    }
+
+    .auth-flow-heading {
+        @apply font-sans-extrabold text-4xl text-primary;
+    }
+
+    .auth-flow-form {
+        @apply gap-2.5;
+    }
+
+    .auth-flow-field {
+        @apply gap-1;
+    }
+
+    .auth-flow-label {
+        @apply font-sans-semibold text-sm text-primary;
+    }
+
+    .auth-flow-input {
+        @apply min-h-14 rounded-2xl border border-border bg-card px-4 font-sans-regular text-base text-primary;
+    }
+
+    .auth-flow-input-invalid {
+        @apply border-destructive;
+    }
+
+    .auth-flow-password-toggle {
+        @apply absolute right-4 top-0 h-14 justify-center;
+    }
+
+    .auth-flow-password-toggle-label {
+        @apply font-sans-semibold text-sm text-muted-foreground;
+    }
+
+    .auth-flow-field-error {
+        @apply font-sans-medium text-sm text-destructive;
+    }
+
+    .auth-flow-form-error {
+        @apply rounded-2xl bg-destructive/10 p-4 font-sans-medium text-sm text-destructive;
+    }
+
+    .auth-flow-button {
+        @apply min-h-14 flex-row items-center justify-center rounded-2xl bg-primary px-5;
+    }
+
+    .auth-flow-button-disabled {
+        @apply opacity-60;
+    }
+
+    .auth-flow-button-label {
+        @apply font-sans-bold text-base text-white;
+    }
+
+    .auth-flow-footer {
+        @apply flex-row flex-wrap items-center justify-center gap-1;
+    }
+
+    .auth-flow-footer-copy {
+        @apply font-sans-regular text-sm text-muted-foreground;
+    }
+
+    .auth-flow-link {
+        @apply font-sans-bold text-sm text-accent;
+    }
+
+    .auth-flow-secondary-link {
+        @apply self-center py-1 font-sans-semibold text-sm text-primary;
     }
 
     .sub-cancel-text {
