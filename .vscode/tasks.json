@@ -1,0 +1,33 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Verify auth spacing bundle",
+			"type": "shell",
+			"command": "npx expo export --platform android",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify compact auth layouts",
+			"type": "shell",
+			"command": "npx expo export --platform android",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify auth screens without descriptions",
+			"type": "shell",
+			"command": "npx expo export --platform android",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify auth screen layout",
+			"type": "shell",
+			"command": "npx expo export --platform android",
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

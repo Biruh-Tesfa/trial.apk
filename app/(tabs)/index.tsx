@@ -1,11 +1,13 @@
 import ListHeading from '@/components/listHeading';
 import SubscriptionCard from '@/components/SubscriptionCard';
 import UpcomingSubscriptionCards from '@/components/upcomingSubscriptionCards';
-import { HOME_BALANCE, HOME_SUBSCRIPTIONS, HOME_USER, UPCOMING_SUBSCRIPTIONS } from '@/constants/data';
+import { HOME_BALANCE, HOME_SUBSCRIPTIONS, UPCOMING_SUBSCRIPTIONS } from '@/constants/data';
 import { icons } from '@/constants/icons';
 import images from '@/constants/image';
 import "@/global.css";
+import { useUser } from "@clerk/expo";
 import { formatCurrency } from "@/lib/utils";
+import { usePostHog } from "posthog-react-native";
 import dayjs from 'dayjs';
 import { styled } from "nativewind";
 import { useState } from 'react';
@@ -15,6 +17,23 @@ const SafeAreaView = styled(RNSafeAreaView);
 
 export default function App() {
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+  const { user } = useUser();
+  const posthog = usePostHog();
+  const userName =
+    user?.fullName ??
+    user?.username ??
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ??
+    "Your account";
+
+  const handleSubscriptionPress = (subscriptionId: string) => {
+    const isExpanding = expandedSubscriptionId !== subscriptionId;
+    setExpandedSubscriptionId(isExpanding ? subscriptionId : null);
+
+    if (isExpanding) {
+      posthog?.capture("subscription_details_expanded");
+    }
+  };
+
   return (
     <SafeAreaView className=" flex-1  bg-background p-5">
       
@@ -25,7 +44,7 @@ export default function App() {
               <View className = "home-header">
                 <View className = "home-user">
                   <Image source={images.avatar} className="home-avatar"/>
-                  <Text className="home-user-name">{HOME_USER.name}</Text>
+                  <Text className = "home-user-name">{userName || "Your account"}</Text>
                 </View>
                 <Image source={icons.add} className="home-add-icon"/>
               </View> 
@@ -59,7 +78,7 @@ export default function App() {
                 <SubscriptionCard 
                   {...item}
                   expanded={expandedSubscriptionId === item.id}
-                  onPress = {()=>setExpandedSubscriptionId((currentId)=>(currentId===item.id ? null : item.id))}
+                  onPress={() => handleSubscriptionPress(item.id)}
                 /> 
               )}
             extraData = {expandedSubscriptionId}
