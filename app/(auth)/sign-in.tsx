@@ -5,8 +5,10 @@ import {
   AuthShell,
 } from "@/components/auth/AuthUI";
 import { getAuthErrorMessage } from "@/lib/auth";
+import { posthogLogs } from "@/lib/posthog-logs";
 import { useSignIn } from "@clerk/expo";
 import { Link } from "expo-router";
+import { usePostHog } from "posthog-react-native";
 import { useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 
@@ -21,6 +23,7 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function SignInScreen() {
   const { signIn, errors, fetchStatus } = useSignIn();
+  const posthog = usePostHog();
   const [screen, setScreen] = useState<SignInScreen>("credentials");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +43,18 @@ export default function SignInScreen() {
     const { error } = await signIn.finalize();
     if (error) {
       setFormError(error.message);
+      return;
     }
+
+    posthog?.capture("user_signed_in", {
+      authentication_method:
+        screen === "verification"
+          ? "email_mfa"
+          : screen === "new-password"
+            ? "password_reset"
+            : "password",
+    });
+    posthogLogs.info("sign_in_completed", { flow: "authentication" });
   };
 
   const startEmailVerification = async () => {
@@ -151,6 +165,7 @@ export default function SignInScreen() {
         return;
       }
 
+      posthog?.capture("password_reset_requested");
       setCode("");
       setScreen("reset-code");
     } catch (error) {

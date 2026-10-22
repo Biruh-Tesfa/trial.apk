@@ -1,15 +1,18 @@
 import { useClerk, useUser } from "@clerk/expo";
+import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
 import { getAuthErrorMessage } from "@/lib/auth";
+import { posthogLogs } from "@/lib/posthog-logs";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function SettingsScreen() {
   const { user } = useUser();
   const clerk = useClerk();
+  const posthog = usePostHog();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const emailAddress = user?.primaryEmailAddress?.emailAddress;
@@ -25,6 +28,9 @@ export default function SettingsScreen() {
 
     try {
       await clerk.signOut();
+      posthog?.capture("user_signed_out");
+      posthogLogs.info("sign_out_completed", { flow: "authentication" });
+      posthog?.reset();
     } catch (error) {
       setIsSigningOut(false);
       setSignOutError(

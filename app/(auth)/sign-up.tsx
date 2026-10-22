@@ -1,5 +1,6 @@
 import { useSignUp } from "@clerk/expo";
 import { Link } from "expo-router";
+import { usePostHog } from "posthog-react-native";
 import { useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import {
@@ -9,11 +10,13 @@ import {
   AuthShell,
 } from "@/components/auth/AuthUI";
 import { getAuthErrorMessage } from "@/lib/auth";
+import { posthogLogs } from "@/lib/posthog-logs";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function SignUpScreen() {
   const { signUp, errors, fetchStatus } = useSignUp();
+  const posthog = usePostHog();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -89,7 +92,11 @@ export default function SignUpScreen() {
       const { error: finalizeError } = await signUp.finalize();
       if (finalizeError) {
         setFormError(finalizeError.message);
+        return;
       }
+
+      posthog?.capture("user_registered", { registration_method: "email" });
+      posthogLogs.info("registration_completed", { flow: "authentication" });
     } catch (error) {
       setFormError(
         getAuthErrorMessage(error, "That code couldn't be verified. Please try again."),
